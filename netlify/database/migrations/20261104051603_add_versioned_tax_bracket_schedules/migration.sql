@@ -1,0 +1,1 @@
+ALTER TABLE "tax_rules" ADD COLUMN "brackets" jsonb DEFAULT '[]' NOT NULL;
