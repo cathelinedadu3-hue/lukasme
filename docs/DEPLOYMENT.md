@@ -23,3 +23,11 @@ Check `/api/connection` first. A successful database check with failed authentic
 The client retries a failed availability check every 30 seconds while the page is visible. This does not suppress the unavailable state. The data service distinguishes authentication outages (503) from rejected or expired sessions (401), and verifies the confirmed account before opening a database connection or checking business membership.
 
 After activation, test registration with an email address whose confirmation inbox is available, confirmation, login, business creation, saved records after refresh, logout/login, and denial of a second account accessing the first business. Reachability and synthetic error tests do not establish that this complete journey passed.
+
+## Google account sign-in
+
+The existing sign-in and registration dialogs offer **Continue with Google** when the live Identity settings report Google enabled. Enable Google under **Identity > Registration > External providers** in the Netlify project dashboard: https://app.netlify.com/projects/inquisitive-caramel-525b66/identity. Provider configuration is dashboard-only; it is not controlled by frontend environment variables. Never put a Google client secret in the application or send one in chat. A custom Google OAuth application is unnecessary unless a branded provider configuration is specifically required.
+
+The button uses the Identity SDK’s OAuth redirect. The existing landing-page callback completes the session, and the normal confirmed-account and business-membership checks still apply. Enabling Google does not grant access to any existing business or merge ownership records. New users still create a business or receive a matching membership. Registration restrictions configured in Identity also apply to provider accounts.
+
+After publishing and enabling Google, test with a controlled Google account on the deployed site: continue through Google consent, return to Horizon, open or create the correct workspace, refresh, sign out, and sign in again. Browser tests with intercepted settings and authorization requests verify the interface and redirect only; they do not verify Google consent or a real production session.
