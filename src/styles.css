@@ -34,3 +34,5 @@ input[type="date"]::-webkit-calendar-picker-indicator{background:url("/images/ca
 .invoice-icon{display:inline-block;flex-shrink:0;object-fit:contain;object-position:center;background:#f7f7f7;border-radius:4px;vertical-align:middle}
 
 .cash-in-hand-icon{display:inline-block;flex-shrink:0;object-fit:contain;object-position:center;border-radius:4px;vertical-align:middle}.cash-in-hand-label{display:inline-flex;align-items:center;gap:7px;vertical-align:middle}
+
+.auth-google{margin-top:16px}.auth-provider-status{margin:16px 0 0;color:var(--muted);font-size:12px;text-align:center}

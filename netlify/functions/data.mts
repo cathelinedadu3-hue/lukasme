@@ -29,9 +29,14 @@ async function identity(req:Request,context:Context){
  if(!bearer?.startsWith('Bearer '))throw new HttpError(401,'Please sign in to access your workspace.');
  if(!context.site.url)throw new HttpError(503,'Identity site configuration is unavailable.');
  const identityOrigin=new URL(context.site.url);identityOrigin.protocol='https:';
- const r=await fetch(`${identityOrigin.origin}/.netlify/identity/user`,{headers:{Authorization:bearer},signal:AbortSignal.timeout(10000)});
- if(!r.ok)throw new HttpError(401,'Your session has expired. Please sign in again.');
- const u=await r.json(); if(!u.id||!u.email||!u.confirmed_at)throw new HttpError(401,'Confirm your email before continuing.');return {id:String(u.id),email:String(u.email).toLowerCase()};
+ let r:Response;
+ try{r=await fetch(`${identityOrigin.origin}/.netlify/identity/user`,{headers:{Authorization:bearer},signal:AbortSignal.timeout(10000)});}catch{throw new HttpError(503,'Authentication is temporarily unavailable. Please retry shortly.');}
+ const isJson=r.headers.get('content-type')?.includes('application/json');
+ if(isJson&&(r.status===401||r.status===403))throw new HttpError(401,'Your session has expired. Please sign in again.');
+ if(!r.ok||!isJson)throw new HttpError(503,'Authentication is temporarily unavailable. Please retry shortly.');
+ let u;try{u=await r.json();}catch{throw new HttpError(503,'Authentication returned an invalid response. Please retry shortly.');}
+ if(!u||typeof u!=='object')throw new HttpError(503,'Authentication returned an invalid response. Please retry shortly.');
+ if(!u.id||!u.email||!u.confirmed_at)throw new HttpError(401,'Confirm your email before continuing.');return {id:String(u.id),email:String(u.email).toLowerCase()};
 }
 async function audit(c:any,business:string,user:string,action:string,id?:string){await c.query('INSERT INTO audit_logs(business_id,user_id,action,entity_id) VALUES($1,$2,$3,$4)',[business,user,action,id??null]);}
 async function snapshot(c:any,business:string){

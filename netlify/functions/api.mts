@@ -14,8 +14,9 @@ export default async(req:Request,context:Context)=>{
   const url=new URL(req.url),path=url.pathname.replace(/^\/api\/?/,'');
   if(path==='connection'&&req.method==='GET'){
    let database=false,authentication=false;
-   const checks=await Promise.allSettled([(async()=>getDatabase().sql`SELECT 1 AS connected`)(),fetch(new URL('/.netlify/identity/settings',context.site.url??url.origin),{signal:AbortSignal.timeout(10000)})]);
-   database=checks[0].status==='fulfilled';authentication=checks[1].status==='fulfilled'&&checks[1].value.ok;
+   const identityOrigin=new URL(context.site.url??url.origin);identityOrigin.protocol='https:';
+   const checks=await Promise.allSettled([(async()=>getDatabase().sql`SELECT 1 AS connected`)(),(async()=>{const response=await fetch(new URL('/.netlify/identity/settings',identityOrigin),{signal:AbortSignal.timeout(10000)});if(!response.ok||!response.headers.get('content-type')?.includes('application/json'))return false;const settings=await response.json();return !!settings&&typeof settings==='object'&&typeof settings.external==='object'&&settings.external!==null;})()]);
+   database=checks[0].status==='fulfilled';authentication=checks[1].status==='fulfilled'&&checks[1].value;
    return json({configured:database&&authentication,database,authentication,service:'Netlify Functions',storage:'Netlify Managed PostgreSQL'});
   }
   const headers=new Headers(req.headers);

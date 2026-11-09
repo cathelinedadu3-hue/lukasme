@@ -30,7 +30,7 @@ Use Node 22+, run `npm install`, then `netlify dev --port 8889`. Netlify supplie
 
 Run `npm test` for native accounting, tax, export and API denial tests; `npm run typecheck` checks frontend and Functions. `npx playwright test` runs desktop and mobile acceptance checks with a Netlify dev server or `HORIZON_E2E_URL`.
 
-Database reachability and Identity activation were checked during migration. Local automated checks do not certify production readiness. Real registration/login, authenticated CRUD for every role, concurrency, backup restoration and persistence across redeployments still require deployed acceptance testing with controlled accounts. No security audit or statutory certification is claimed.
+Database reachability was verified during diagnosis; Identity activation is requested during deployment and must be verified against the deployed settings endpoint. Local automated checks do not certify production readiness. Real registration/login, authenticated CRUD for every role, concurrency, backup restoration and persistence across redeployments still require deployed acceptance testing with controlled accounts. No security audit or statutory certification is claimed.
 
 Passwords are managed by Identity; custom Argon2id storage, application MFA and provider refresh-rotation guarantees are not implemented or certified. Gross payroll postings do not deduct statutory contributions. Tax results are estimates using configured effective-dated rules, not TRA assessments, EFD receipts or submissions. Native mobile packages, offline synchronization, bank feeds and push/email reminders are not included. Full snapshots remain unsuitable for very large businesses; paginated collection APIs are available, but the dashboard currently reads full snapshots.
 
